@@ -9,7 +9,7 @@ CREATE TABLE recipe (
 	picture TEXT NOT NULL
 
 );
-\copy recipe(name, picture) FROM '~/ShareSync/CS/3308/project/recipesTableData.csv' DELIMITER ',' CSV; -- may need to change this to semicolon delimiter for consistency
+\copy recipe(name, picture) FROM '~/recipesTableData.csv' DELIMITER ',' CSV; -- may need to change this to semicolon delimiter for consistency
 
 CREATE TABLE details (
 
@@ -26,7 +26,7 @@ CREATE TABLE details (
 	UNIQUE(recipe_id)
 	
 );
-\copy details(cook_time, servings, cals, directions) FROM '~/ShareSync/CS/3308/project/detailsTableData.csv' DELIMITER ';' CSV; -- Not sure if this was entirely necessary, but swapped delimiter to semicolon to ensure there were no insertion errors (ingredients has commas)
+\copy details(cook_time, servings, cals, directions) FROM '~/detailsTableData.csv' DELIMITER ';' CSV; -- Not sure if this was entirely necessary, but swapped delimiter to semicolon to ensure there were no insertion errors (ingredients has commas)
 
 
 CREATE TABLE stats (

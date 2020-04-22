@@ -9,6 +9,7 @@ For this parser to work correctly: Ingredients list must be captured within doub
 using namespace std;
 void parse(string filename)
 {
+	cout<<"\x31"<<endl;
 	ifstream inFile; //ceate file stream
 	inFile.open(filename);
 	if(inFile.fail())
