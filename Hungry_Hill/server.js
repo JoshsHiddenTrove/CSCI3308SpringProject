@@ -8,14 +8,14 @@
 
 
 // Deployment configuration Variables
-var deploy_local=true;	// If serving locally, set to true
+var deploy_local=false;	// If serving locally, set to true
 
 const local_port=3000;			// Port to serve locally
 const local_configuration= {	// Database to read/ write locally
 	host: 'localhost',
 	port: 5432,
 	database: 'hungryhill',
-	user: 'postgres',
+	user: 'gzimm4',
 	password: 'pwd'
 };
 
@@ -27,7 +27,7 @@ var express = require('express');
 var body_parser = require('body-parser');
 var pg_promise = require('pg-promise');
 var cookie_parser = require('cookie-parser');
-var jquery = require('jquery');
+
 
 
 // Setup
@@ -66,8 +66,9 @@ let sessionData = {
 		sank: [0]	// Recipes swiped regardless of direction; i.e. input was sank
 	},
 	misc: {
-		new: true	// If user is new
-	}
+		new: true,	// If user is new
+	},
+	version: 1		// For testing purposes
 } 
 
 
@@ -76,15 +77,26 @@ function initCookie(res) { 	// Initialize session if we don't have an active ses
 	res.cookie("session", sessionData);
 }
 
-
-// App Request Handlers
-// Home page- loads the main feature; swiping in favor of recipes
-function homePage(req,res) {
+function loadCookie(req,res) {
 	var current_session=req.cookies.session;
 	if (!current_session) {
 		initCookie(res);
 		current_session=sessionData;
 	};
+
+	if (current_session.version != sessionData.version){
+		console.log('Outdated cookies');
+		res.clearCookie('session');
+		initCookie(res);
+		current_session=sessionData;
+	}
+	return current_session;
+}
+
+// App Request Handlers
+// Home page- loads the main feature; swiping in favor of recipes
+function homePage(req,res) {
+	var current_session=loadCookie(req,res);
 
 	// Create query based on cookie data
 	// Generate a list of all recipe id's already seen
@@ -131,7 +143,6 @@ function homePage(req,res) {
 	})
 	.catch(function(err) {
 		console.log(err);
-		
 	})
 
 };
@@ -143,11 +154,7 @@ function handleSwipe(req,res) {
 	var id=req.query.id;		// Recipe id
 	var code=req.query.code;	// Recipe code
 
-	var current_session=req.cookies.session;
-	if (!current_session) {
-		initCookie(res);
-		current_session=sessionData;
-	};
+	var current_session=loadCookie(req,res);
 
 	// Update cookie
 	var increment_query='UPDATE stats SET num_dislikes=num_dislikes+1 WHERE recipe_id='+id;	// Assume dislike incrementation
@@ -186,11 +193,7 @@ function handleSettings(req,res) {
 		value=(value=='true');
 
 
-	var current_session=req.cookies.session;
-	if (!current_session) {
-		initCookie(res);
-		current_session=sessionData;
-	};
+	var current_session=loadCookie(req,res);
 
 	current_session.settings[setting]=value;
 
@@ -204,11 +207,7 @@ app.post('/updateSettings',handleSettings);
 
 // filterPage - Loads the user's page to set filters
 function filterPage(req,res) {
-	var current_session=req.cookies.session;
-	if (!current_session) {
-		initCookie(res);
-		current_session=sessionData;
-	};
+	var current_session=loadCookie(req,res);
 
 	res.render('filters',{
 		settings: current_session.settings
@@ -219,11 +218,7 @@ app.get('/filters',filterPage);
 
 // recipePage - Loads a feature page where all user's liked recipes are recorded
 function recipePage(req,res) {
-	var current_session=req.cookies.session;
-	if (!current_session) {
-		initCookie(res);
-		current_session=sessionData;
-	};
+	var current_session=loadCookie(req,res);
 
 	featured_query=`SELECT * FROM (recipe INNER JOIN stats ON recipe.recipe_id=stats.recipe_id) 
 					INNER JOIN details ON recipe.recipe_id=details.recipe_id 
