@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="HungryHill.css">
+    <title>Hungry Hill</title>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">
+        <img src="hungryhill.png" width="30" height="30" class="d-inline-block align-top" alt="">
+        Hungry Hill
+      </a>
+      <a class="navbar-brand" href="#"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    	 <span class="navbar-toggler-icon"></span>
+  	  </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+    	<ul class="navbar-nav">
+      	 <li class="nav-item active">
+        	<a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="filters.html">Filters</a>
+	      </li>
+	    </ul>
+  	  </div>
+    </nav>
+
+    <!-- Gallery -->
+    <div class="slideshow-container">
+
+	    <div class="mySlides">
+	      <img src=pancakes.jpg>
+	      <div class="text">Cafe Aion</div>
+	    </div>
+
+	    <div class="mySlides">
+	      <img src=food.jpg>
+	      <div class="text">Caption Two</div>
+	    </div>
+
+	    <div class="mySlides">
+	      <img src="tacos.jpg">
+	      <div class="text">Caption Three</div>
+	    </div>
+
+    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+    </div>
+    <div class="container">
+      <div class="recipe">
+        <h2>Ingredients</h2>
+          <ul>
+            <li>3/4 cup milk</li>
+            <li>2 tablespoons white vinegar</li>
+            <li>1 cup all-purpose flour</li>
+            <li>2 tablespoons white sugar</li>
+            <li>1 teaspoon baking powder</li>
+            <li>1/2 teaspoon baking soda</li>
+            <li>1/2 teaspoon salt</li>
+            <li>1 egg</li>
+            <li>2 tablespoons butter, melted</li>
+            <li>cooking spray</li>
+          </ul>
+        <h2>Recipe</h2>
+        <ol>
+          <li>Combine milk with vinegar in a medium bowl and set aside for 5 minutes to "sour".</li>
+          <li>Combine flour, sugar, baking powder, baking soda, and salt in a large mixing bowl. Whisk egg and butter into "soured" milk. Pour the flour mixture into the wet ingredients and whisk until lumps are gone.</li>
+          <li>Heat a large skillet over medium heat, and coat with cooking spray. Pour 1/4 cupfuls of batter onto the skillet, and cook until bubbles appear on the surface. Flip with a spatula, and cook until browned on the other side.</li>
+        </ol>
+      </div>
+    </div>
+    <br>
+
+    <script>
+    var slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+      showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+      showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+      var i;
+      var slides = document.getElementsByClassName("mySlides");
+      if (n > slides.length) {slideIndex = 1}    
+      if (n < 1) {slideIndex = slides.length}
+      for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";  
+      }
+      slides[slideIndex-1].style.display = "block";
+    }
+    </script>
+
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
