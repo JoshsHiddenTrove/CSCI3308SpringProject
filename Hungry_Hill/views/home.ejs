@@ -34,13 +34,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
          <li class="nav-item active">
-          <a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="/">Match Recipes<span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/filters">Filters</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/recipes">Liked Recipes</a>
+          <a class="nav-link" href="/recipes">Featured</a>
         </li>
       </ul>
       </div>
@@ -97,18 +97,7 @@
     <div class="container">
       <div id="recipe" class="recipe" style='display: none;'>
         <h2>Ingredients</h2>
-          <ul id='recipe_list'>
-            <li>3/4 cup milk</li>
-            <li>2 tablespoons white vinegar</li>
-            <li>1 cup all-purpose flour</li>
-            <li>2 tablespoons white sugar</li>
-            <li>1 teaspoon baking powder</li>
-            <li>1/2 teaspoon baking soda</li>
-            <li>1/2 teaspoon salt</li>
-            <li>1 egg</li>
-            <li>2 tablespoons butter, melted</li>
-            <li>cooking spray</li>
-          </ul> 
+          <ul id='recipe_list'></ul> 
         <!-- No directions given in db
         <h2>Recipe</h2>
         <ol>
@@ -158,7 +147,7 @@
         return;
       }
 
-      if (n >= slides.length) {  // Out of recipes loaded on page; check if more exist (limiter on queries sent to page for optimization)
+      if (n >= slides.length) {  // Out of recipes loaded on page; check if more exist (limiter on queries sent to page for storage/ running time)
         setTimeout(function () {
         window.location=window.location;
         },100);
@@ -174,7 +163,7 @@
       console.log(directions.length);
 
       for (let i=0; i<directions.length; i++) {
-        if (directions[i]==',') {
+        if (directions[i]==',') { // Add new list item on comma
           direction_html+='<li>'+sub+"</li>";
           sub="";
         }
@@ -183,10 +172,10 @@
         }
       }
       
-      $('#recipe_list').html(direction_html);
+      $('#recipe_list').html(direction_html); // Import new list into html
     }
 
-    function ToggleRecipe() {
+    function ToggleRecipe() { // Toggles recipe more information block
       document.getElementById("recipe").style.display = (document.getElementById("recipe").style.display==='none' ? 'block' : 'none')
     }
 

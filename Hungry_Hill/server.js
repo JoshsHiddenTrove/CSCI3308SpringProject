@@ -15,7 +15,7 @@ const local_configuration= {	// Database to read/ write locally
 	host: 'localhost',
 	port: 5432,
 	database: 'hungryhill',
-	user: 'gzimm4',
+	user: 'postgres',
 	password: 'pwd'
 };
 
@@ -78,6 +78,7 @@ function initCookie(res) { 	// Initialize session if we don't have an active ses
 
 
 // App Request Handlers
+// Home page- loads the main feature; swiping in favor of recipes
 function homePage(req,res) {
 	var current_session=req.cookies.session;
 	if (!current_session) {
@@ -137,7 +138,7 @@ function homePage(req,res) {
 app.get('/',homePage);
 
 
-
+//handleSwipe - Will record liked recipe ids in cookie session and post an update to the database
 function handleSwipe(req,res) {
 	var id=req.query.id;		// Recipe id
 	var code=req.query.code;	// Recipe code
@@ -155,7 +156,7 @@ function handleSwipe(req,res) {
 		current_session.recipes.liked.push(parseInt(id));
 		increment_query='UPDATE stats SET num_likes=num_likes+1 WHERE recipe_id='+id;	// Change to like incrementation
 	}
-	//current_session.recipes.sank[current_session.recipes.sank.lenth]=id;
+	
 	current_session.recipes.sank.push(parseInt(id));
 	console.log(current_session.recipes.sank);
 
@@ -176,7 +177,7 @@ function handleSwipe(req,res) {
 app.post('/swipe',handleSwipe);
 
 
-
+// handleSettings- will update the user's cookie based off a post request
 function handleSettings(req,res) {
 	var setting=req.query.setting;
 	var value=req.query.val;
@@ -201,6 +202,7 @@ function handleSettings(req,res) {
 app.post('/updateSettings',handleSettings);
 
 
+// filterPage - Loads the user's page to set filters
 function filterPage(req,res) {
 	var current_session=req.cookies.session;
 	if (!current_session) {
@@ -215,18 +217,55 @@ function filterPage(req,res) {
 app.get('/filters',filterPage);
 
 
+// recipePage - Loads a feature page where all user's liked recipes are recorded
 function recipePage(req,res) {
-	res.render('Liked_Recipes',{
+	var current_session=req.cookies.session;
+	if (!current_session) {
+		initCookie(res);
+		current_session=sessionData;
+	};
 
-	});
+	featured_query=`SELECT * FROM (recipe INNER JOIN stats ON recipe.recipe_id=stats.recipe_id) 
+					INNER JOIN details ON recipe.recipe_id=details.recipe_id 
+					ORDER BY (num_likes-num_dislikes) DESC LIMIT 4;`
+
+	vegetarian_query=`SELECT * FROM ((recipe INNER JOIN stats ON recipe.recipe_id=stats.recipe_id) 
+					INNER JOIN details ON recipe.recipe_id=details.recipe_id)
+					INNER JOIN preferences ON recipe.recipe_id=preferences.recipe_id
+					WHERE vegetarian=true
+					ORDER BY (num_likes-num_dislikes) DESC LIMIT 4;`
+
+	var liked_recipes="("+current_session.recipes.liked[0];
+	for(var i = 1; i < current_session.recipes.liked.length; i++) {
+		liked_recipes+=','+current_session.recipes.liked[i];
+	};
+	liked_recipes+=')';
+
+	liked_query=`	SELECT * FROM (SELECT * FROM recipe
+					WHERE recipe_id IN `+liked_recipes+`) AS grouped_data
+					INNER JOIN details ON grouped_data.recipe_id=details.recipe_id;`;
+
+	database
+	.task('get-everything', search => {
+        return search.batch([
+            search.any(featured_query),
+            search.any(vegetarian_query),
+            search.any(liked_query)
+        ]);
+    })
+    .then(results => {
+      res.render('Liked_Recipes',{
+      	featured: results[0],
+      	vegetarian: results[1],
+      	liked: results[2]
+	  });
+    })
+    .catch(err => {
+        // display error message in case an error
+          console.log(err);
+    });
 };
 app.get('/recipes',recipePage);
-
-
-function postSwipe(req,res) {
-
-};
-app.post('/swipe',postSwipe);
 
 
 

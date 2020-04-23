@@ -192,4 +192,33 @@ h3 {
   font-size: 30px;
 }
 
+.feature-set {
+  display: inline-block;
+  width: 90%;
+  margin: 0% 5%;
+  margin-bottom: 32px;
+  text-align: center;
+}
 
+.feature-set .feature-card {
+  display: block;
+  width: 228px;
+  object-fit: contain;
+  border-radius: 20px;
+  border: grey dotted 2px;
+  float: left;
+  margin: 4px 12px;
+}
+.feature-set .feature-img {
+  object-fit: cover;
+  border-radius: 20px;
+  height:calc(146px - 10px);
+  width:calc(100% - 10px);
+  margin: 5px;
+}
+
+.feature-set p{
+  text-align: center;
+  font-size: 18px;
+  padding-top: 4px;
+}
