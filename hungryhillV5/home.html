@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="HungryHill.css">
+    <title>Hungry Hill</title>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">
+        <img src="hungryhill.png" width="30" height="30" class="d-inline-block align-top" alt="">
+        Hungry Hill
+      </a>
+      <a class="navbar-brand" href="#"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    	 <span class="navbar-toggler-icon"></span>
+  	  </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+    	<ul class="navbar-nav">
+      	 <li class="nav-item active">
+        	<a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>
+	      </li>
+	      <li class="nav-item">
+	        <a class="nav-link" href="filters.html">Filters</a>
+	      </li>
+        <li class="nav-item">
+          <a class="nav-link" href="Liked_Recipes.html">Liked Recipes</a>
+        </li>
+	    </ul>
+  	  </div>
+    </nav>
+
+    <!-- Tutorial Button -->
+    <style>
+    h1 {text-align: center;}
+    p {text-align: center;}
+    div.center_it {
+      text-align: center;
+      }
+    </style>
+<button id="TutBtn" class="tutorial_button" style="vertical-align:middle"><span>Click here to see how this site works  </span></button>
+<div id="Tutorial" class="tutorial">
+  <div class="Opened_Tutorial">
+    <span class="Closed_Tutorial"></span>
+    <H1><strong>Welcome to Hungry Hill!</strong></H1>
+    <br>
+    <div class="center_it">
+    <H4>You will have 3 options to do as you like with the recipes you are being shown:</H4>
+  </div>
+    <br>
+      <H4><strong>Left Swipe:</strong> Acts as a dislike. If you swipe left you won't see this recipe as an option again.</H4>
+      <H4><strong>Right Swipe:</strong> Acts as a like. This means you saved the recipe and it will show up under the 'Liked Recipes' tab.</H4>
+      <H4><strong>Down Arrow:</strong> This shows more information about the recipe, including all ingredients needed to make it!</H4>
+      <br>
+      <div>
+    <p>Click anywhere outside of this box to return<p>
+    </div>
+  </div>
+</div>
+
+<script>
+var tutorial = document.getElementById("Tutorial");
+var btn = document.getElementById("TutBtn");
+var span = document.getElementsByClassName("Closed_Tutorial")[0];
+
+btn.onclick = function() {
+  tutorial.style.display = "block"; //opens the button
+}
+
+window.onclick = function(event) {
+  if (event.target == tutorial) {
+    tutorial.style.display = "none"; //closes the button
+  }
+}
+</script>
+
+    <!-- Gallery -->
+    <div class="slideshow-container">
+
+	    <div class="mySlides">
+	      <img src=pancakes.jpg>
+	    </div>
+
+	    <div class="mySlides">
+	      <img src=food.jpg>
+	    </div>
+
+	    <div class="mySlides">
+	      <img src="tacos.jpg">
+	    </div>
+
+    <a class="dislike" onclick="plusSlides(-1)">&#10094;</a>
+    <a class="like" onclick="plusSlides(1)">&#10095;</a>
+    <a class="down" onclick="ToggleRecipe()">&#65088;</a>
+
+    </div>
+
+    <div class="icon-bar">
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="facebook"><img src="FBicon.png"></a>
+      <!--a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="twitter"><img src="Twiticon.png"></a-->
+      <a href="https://www.pinterest.com/foodnetwork/" class="pinterest"><img src="Picon.png"></a>
+      <!--a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="instagram"><img src="IGicon.png"></a-->
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" class="youtube"><img src="YTicon.png"></a>
+    </div>
+
+    <div class="container">
+      <div id="recipe" class="recipe">
+        <h2>Ingredients</h2>
+          <ul>
+            <li>3/4 cup milk</li>
+            <li>2 tablespoons white vinegar</li>
+            <li>1 cup all-purpose flour</li>
+            <li>2 tablespoons white sugar</li>
+            <li>1 teaspoon baking powder</li>
+            <li>1/2 teaspoon baking soda</li>
+            <li>1/2 teaspoon salt</li>
+            <li>1 egg</li>
+            <li>2 tablespoons butter, melted</li>
+            <li>cooking spray</li>
+          </ul>
+      </div>
+    </div>
+
+    <br>
+
+    <script>
+    var slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+      showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+      showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+      var i;
+      var slides = document.getElementsByClassName("mySlides");
+      if (n > slides.length) {slideIndex = 1}
+      if (n < 1) {slideIndex = slides.length}
+      for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+      }
+      slides[slideIndex-1].style.display = "block";
+    }
+
+    function ToggleRecipe() {
+      var toggle = document.getElementById("recipe");
+      if (toggle.style.display === "none") {
+        toggle.style.display = "block";
+      } else {
+        toggle.style.display = "none";
+      }
+    }
+
+    </script>
+
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  </body>
+</html>
