@@ -70,7 +70,7 @@ void parse(string filename)
 				int i = 0;
 				while(i < recipeNames.size())
 				{
-					writeToRecipes << recipeNames.at(i) << "," << tempPicturePath << "," << "0" << endl;
+					writeToRecipes << recipeNames.at(i) << "," << picturePaths.at(i) << "," << "0" << endl;
 					i++;
 				}
 				writeToRecipes.close();
