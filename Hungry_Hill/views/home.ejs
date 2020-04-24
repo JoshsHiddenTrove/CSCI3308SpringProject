@@ -11,6 +11,7 @@
     <script src="http://code.jquery.com/jquery-3.4.1.js" crossorigin="anonymous"></script>
     -->
     <script src='/resources/js/jquery.js'></script>
+    <script src="/resources/js/swiped-events.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 
@@ -45,6 +46,63 @@
       </ul>
       </div>
     </nav>
+
+    
+    <button id="TutBtn" class="tutorial_button" style="vertical-align:middle"><span>Click here to see how this site works  </span></button>
+    
+
+    
+    <div id="Tutorial" class="tutorial">
+      <div class="Opened_Tutorial">
+        <span class="Closed_Tutorial"></span>
+        <H1><strong>Welcome to Hungry Hill!</strong></H1>
+        <br>
+        <div class="center_it">
+        <H4>You will have 3 options to do as you like with the recipes you are being shown:</H4>
+      </div>
+        <br>
+        <H4><strong>Left Swipe:</strong> Acts as a dislike. If you swipe left you won't see this recipe as an option again.</H4>
+        <H4><strong>Right Swipe:</strong> Acts as a like. This means you saved the recipe and it will show up under the 'Liked Recipes' tab.</H4>
+        <H4><strong>Down Arrow:</strong> This shows more information about the recipe, including all ingredients needed to make it!</H4>
+        <br>
+        <div>
+          <p>Click anywhere to return</p>
+        </div>
+      </div>
+    </div>
+    <!-- Tutorial Button -->
+    <style>
+    h1 {text-align: center;}
+    p {text-align: center;}
+    div.center_it {
+      text-align: center;
+      }
+    </style>
+
+    <script>
+    var tutorial = document.getElementById("Tutorial");
+    var btn = document.getElementById("TutBtn");
+    var span = document.getElementsByClassName("Closed_Tutorial")[0];
+    var active=false;
+
+    btn.onclick = function() {
+      tutorial.style.display = "block"; //opens the button
+      setTimeout(function () {
+        active=true;
+      },100);
+    }
+
+    window.onclick = function(event) {
+      if (active==false){
+        return
+      }
+
+      tutorial.style.display = "none"; //closes the button
+      active=false;
+    }
+    </script>
+
+
 
     <!-- Gallery -->
     <% // Initialize some useful variables
@@ -91,13 +149,13 @@
       }
     %>
     <%- rec_slides_html%>
-    
-    
+
+
 
     <div class="container">
       <div id="recipe" class="recipe" style='display: none;'>
         <h2>Ingredients</h2>
-          <ul id='recipe_list'></ul> 
+          <ul id='recipe_list'></ul>
         <!-- No directions given in db
         <h2>Recipe</h2>
         <ol>
@@ -120,6 +178,25 @@
     <br>
 
     <script>
+    window.onload = function() {
+
+      document.addEventListener('swiped-left', function(e) {
+          console.log(e.type);
+          swipe(0);
+      });
+
+      document.addEventListener('swiped-right', function(e) {
+          console.log(e.type);
+          swipe(1);
+      });
+
+      document.addEventListener('swiped-up', function(e) {
+          console.log(e.type);
+      });
+
+
+    }
+
     var recIndex = 0;
 
     loadRecipe(recIndex);
@@ -171,7 +248,7 @@
           sub+=directions[i];
         }
       }
-      
+
       $('#recipe_list').html(direction_html); // Import new list into html
     }
 

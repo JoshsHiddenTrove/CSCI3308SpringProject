@@ -6,7 +6,7 @@ CREATE TABLE recipe(
 	saved BOOLEAN NOT NULL -- NB: 'saved' corresponds to a user 'liking' a given recipe
 
 );
-\copy recipe(name, picture, saved) FROM 'recipesTableData.csv' DELIMITER ',' CSV; -- psql function to import/copy data from external csv file into the database
+\copy recipe(name, picture, saved) FROM '../CSCI3308SpringProject/recipesTableData.csv' DELIMITER ',' CSV; -- psql function to import/copy data from external csv file into the database
 
 
 --create details table
@@ -21,18 +21,17 @@ CREATE TABLE details(
 	recipe_id SERIAL REFERENCES recipe(recipe_id) ON DELETE CASCADE
 
 );
-\copy details(cook_time, servings, cals, directions) FROM 'detailsTableData.csv' DELIMITER ';' CSV; -- Not sure if this was entirely necessary, but swapped delimiter to semicolon to ensure there were no insertion errors (ingredients has commas)
+\copy details(cook_time, servings, cals, directions) FROM '../CSCI3308SpringProject/detailsTableData.csv' DELIMITER ';' CSV; -- Not sure if this was entirely necessary, but swapped delimiter to semicolon to ensure there were no insertion errors (ingredients has commas)
 
 
 --create stats table
 CREATE TABLE stats (
-
 	-- Again ignoring PK for now
 	num_likes INTEGER NOT NULL,
 	num_dislikes INTEGER NOT NULL,
 	recipe_id SERIAL REFERENCES recipe(recipe_id) ON DELETE CASCADE
 );
-\copy stats(num_likes,num_dislikes) FROM 'statsTableData.csv' DELIMITER ',' CSV;
+\copy stats(num_likes,num_dislikes) FROM '../CSCI3308SpringProject/statsTableData.csv' DELIMITER ',' CSV;
 
 
 -- create preferences table
@@ -45,5 +44,5 @@ CREATE TABLE preferences (
 	nut_free BOOLEAN NOT NULL,
 	recipe_id SERIAL REFERENCES recipe(recipe_id) ON DELETE CASCADE
 );
-\copy preferences(vegan, dairy_free, vegetarian, gluten_free, nut_free) FROM 'preferencesTableData.csv' DELIMITER ',' CSV;
+\copy preferences(vegan, dairy_free, vegetarian, gluten_free, nut_free) FROM '../CSCI3308SpringProject/preferencesTableData.csv' DELIMITER ',' CSV;
 -- alter tables: add foregin key constraints

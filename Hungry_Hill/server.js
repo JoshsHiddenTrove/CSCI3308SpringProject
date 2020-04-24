@@ -65,10 +65,7 @@ let sessionData = {
 		liked: [0],	// Recipes swiped in favor of
 		sank: [0]	// Recipes swiped regardless of direction; i.e. input was sank
 	},
-	misc: {
-		new: true,	// If user is new
-	},
-	version: 1		// For testing purposes
+	version: 2		// For testing purposes
 } 
 
 
@@ -136,8 +133,7 @@ function homePage(req,res) {
 	database.any(find_query)
 	.then(function (matched_recipes){
 		res.render('home',{
-        	recipes: matched_recipes,
-        	new: current_session.misc.new
+        	recipes: matched_recipes
     	});
 
 	})
