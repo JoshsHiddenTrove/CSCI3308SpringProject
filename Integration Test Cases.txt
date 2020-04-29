@@ -1,0 +1,236 @@
+
+
+
+
+Filter Test Cases
+Verify that filters are correctly saved after page exit, correctly changed on user input, and correctly loaded on filters view.
+
+We will use cookies to save these preferences. This is beneficial, because db queries don't need to involve a user table. If we want to implement cross platform functionality, we may utilize the google api to sign users in (and only store email). We can then load there preferences in the cookie after log-in and default there preferences on logout. 
+These cookies are defined as 
+
+let sessionData = {
+	settings: {		// Corresponds to users setting
+		vegetarian: false,
+		vegan: false,
+		dairy_free: false,
+		gluten_free: false,
+		nut_free: false,
+		cook_time: 'Any Time'
+	},
+	recipes: {
+		liked: [0],	// Recipes swiped in favor of
+		sank: [0]	// Recipes swiped regardless of direction; i.e. input was sank
+	},
+	version: 1		// For testing purposes
+}
+
+
+
+# First test- testing correct cookie implementation
+Requires that filters page be embedded to load user preferences.
+
+Test case 1
+Clear cookies, set initial settings such that all boolean values are true. Load filters page, if all checkboxes are checked, this passes.
+
+TEST PASSED
+
+Test case 2
+Clear cookies, set initial settings such that only vegan and vegetarian are true. Load filters page, if only vegan and vegetarian objects are checked, this passes.
+
+TEST PASSED
+
+Test case 3
+Clear cookies, set initial settings such that all boolean values are false. Load filters page, if no checkboxes are checked, this passes.
+
+TEST PASSED
+
+
+
+# Second test- testing correct communication for setting preferences
+Requires above tests be met, and filters page sends post request that server will use to change preferences.
+Post request takes in two paramaters in query;  setting name and new value.
+Set console.log() in post handler to output these values
+
+Test case 1
+Clear cookies, set post request to send in both parameters in code. Check each box on and off. If for every box we have an output of the setting name appearing in cookie with first a true value and then a false value- this test passes.
+
+TEST PASSED
+
+Test case 2
+Clear cookies, set post request to send in a parameter for a setting that doesn't exist. If we output an error message we specificed, this test passes.
+
+TEST PASSED
+
+Test case 3
+Clear cookies, set post request to send in a parameter for a non-bool value but real setting. If we output an error message we specified, this test passes.
+
+TEST PASSED
+
+Test case 4
+Set post request to try and inject code console.log('vulnerable'). If we succeed outputing this, test fails.
+
+TEST PASSED (Parameters are only used in indexing dictionaries and setting values, we will return an error if we get unexpected parameters. Thus this is not easily attackable)
+
+
+
+# Third test- testing saving
+Requires above tests be met, and post requests are fully implemented.
+
+Test case 1
+Clear cookies, load filters page.
+Select vegetarian option true and return to home page, return back to filter page. Checkbox must still be selected.
+Follow same process for every checkbox, and if only that value is visibly changed then this test case passes.
+
+TEST PASSED
+FILTER PAGE FUNCTIONAL
+
+
+
+# Fourth test- verifying SQL Queries are correct; all done in terminal -> psql.
+
+Test case 1- Get recipes using a set of ids. These id's will track already seen recipes, so the output should not display them. If every recipe, but the id's in the set appear this test passes.
+
+SELECT * FROM recipe WHERE recipe_id NOT IN (0,5,8);
+
+TEST PASSED
+
+
+Test case 2- Get recipes from preferences. If preference is true, add it to string format.
+
+Select preferences vegan, vegetarian, nut free
+
+Output query based off prefereces. Result:
+SELECT * FROM recipe WHERE (vegan and vegetarian and nut-free)
+
+Test query, if only vegan, vegetarian, and nut free items are output, then this test passes.
+
+TEST PASSED
+
+
+Test case 3- All conditions put together to search for recipe, not in cookie sank set, with appropriate filters, and proper cook time bounds.
+
+var find_query=`SELECT * FROM ((SELECT * FROM recipe 
+	 				WHERE recipe_id NOT IN `+sank_recipes+`) AS valid_ids 
+	 				INNER JOIN preferences ON valid_ids.recipe_id=preferences.recipe_id) 
+	 				INNER JOIN details ON details.recipe_id=recipe.recipe_id
+	 				WHERE `+ active_filters +` AND `+ cook_condition + `
+	 				ORDER BY RANDOM()  
+					LIMIT 25;`;
+
+Test various results from above format, if any recipe comes up that should be filtered out then this test fails.
+
+TEST PASSED
+RECIPE SQL STATEMENTS PASSED
+
+
+
+
+# Fifth test- Ensure that all recipes passed in from query are loaded onto page. We can iterate through each recipe and display one at a time. If we run out of recipes, we can make another request to get more, since we don't want to load to many recipes onto the page at one time.
+Requires above test cases be met and implemented; also requires embedded home page.
+
+Test case 1- Clear cookies, set preferences to vegan only. Load home page, and check html. If all and only vegan recipes are stored in html, then this case passes.
+
+TEST PASSED
+
+Test case 2- Set preferences to default. Load home page, and check html. If only 25 recipes appear, then this test case passes.
+
+TEST PASSED
+
+Test case 3- Set all preferences to true. load home page. If home page displays no available recipes message, then this test case passes.
+
+TEST PASSED
+
+
+
+# Sixth Test- Test second post request for swipe feature.
+Requires above test cases be met and post request sends in two parameters (recipe id) and swipe code. Swipe code determines what action was used (a like or dislike), and recipe id for which recipe was swiped on.
+Requires that code be implemented to increment likes/ dislikes from swipe code.
+
+Test case 1-
+Send post request with recipe id 1, and swipe code '1' for like. Check database before and after, if database increments 1 on like in stats table for recipe_id=1; then this test passes.
+
+TEST PASSED
+
+Test case 2-
+Send post request with recipe id 1, and swipe code '0' for dislike. Check database before and after, if database increments 1 on dislike in stats table for recipe_id=1; then this test passes.
+
+TEST PASSED
+
+Test case 3- Attempt to inject sql by sending false post request. Let id= "; CREATE TABLE test (col1 int);"
+If a table named test is created, then we did not escape properly. Test fails
+
+TEST PASSED
+
+Test case 3.5- Same as above, but try escaping escape characters. If table named test is created, then test fails.
+
+TEST PASSED
+
+
+
+# Seventh Test- Full swipe feature
+Requires console.log statement print out cookie table to swipes that were liked and swipes that had input sank.
+
+Test case 1- Clear cookie, set vegan filter to true. Swipe through all recipes; if all recipes with vegan tag were seen and page loaded 'no new recipe with set filters' message afterwards, then this test passed.
+
+TEST PASSED
+
+Test case 2- Set vegan filter to false, if page displays recipes again then this test passes.
+
+TEST PASSED
+
+Test case 3- Swipe through recipes, randomly selecting right and left swipes. If all recipes swiped appear in input sank table after swipe then this test passes.
+
+TEST PASSED
+
+Test case 4- Same as above, but if all recipes swiped right on appear in liked recipes table in cookies, then this test passes.
+
+TEST PASSED
+
+
+
+# Eigth test- Featured page SQL queries.
+
+Test case 1- 
+featured_query=`SELECT * FROM (recipe INNER JOIN stats ON recipe.recipe_id=stats.recipe_id) 
+					INNER JOIN details ON recipe.recipe_id=details.recipe_id 
+					ORDER BY (num_likes-num_dislikes) DESC LIMIT 4;`
+
+If the recipes with the most positive feedback minus negative feedback are returned, then this test passes.
+
+TEST PASSED
+
+
+Test case 2- 
+vegetarian_query=`SELECT * FROM ((recipe INNER JOIN stats ON recipe.recipe_id=stats.recipe_id) 
+					INNER JOIN details ON recipe.recipe_id=details.recipe_id)
+					INNER JOIN preferences ON recipe.recipe_id=preferences.recipe_id
+					WHERE vegetarian=true
+					ORDER BY (num_likes-num_dislikes) DESC LIMIT 4;`
+
+Same test as above, but limited to only vegetarian recipes. Passes is previous condition is met, and only vegetarian recipes appear.
+
+Test case 3-
+liked_query=`	SELECT * FROM (SELECT * FROM recipe
+					WHERE recipe_id IN `+liked_recipes+`) AS grouped_data
+					INNER JOIN details ON grouped_data.recipe_id=details.recipe_id;`;
+
+let liked recipes be the set of recipe_ids where the user swiped right. If given the test sets (1,8,2), (4,4,3), (0,5,3) and the results given include recipes (1,2,8), (3,4), and (3,5) then this test passes.
+
+TEST PASSED
+
+
+# Ninth Test- Embedded feature page works
+
+Test case 1- If 4 of the top recipes provided in the query above appear on page, this test passes.
+
+TEST PASSED
+
+Test case 2- If 4 of the top vegetarian recipes are provided in the query above appear on page, this test passes.
+
+TEST PASSED
+
+Test case 3- If all recipes in user's liked set appear on page, then this test passes.
+
+TEST PASSED
+
+
