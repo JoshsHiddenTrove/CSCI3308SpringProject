@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    
+    <!-- JavaScript -->
+    <!--
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/jquery-3.4.1.js" crossorigin="anonymous"></script>
+    -->
+    <script src='/resources/js/jquery.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="../resources/css/HungryHill.css">
+
+    <title>Hungry Hill</title>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <a class="navbar-brand" href="#">
+        <img src="../resources/img/hungryhill.png" width="30" height="30" class="d-inline-block align-top" alt="">
+        Hungry Hill
+      </a>
+      <a class="navbar-brand" href="#"></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+       <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+         <li class="nav-item">
+          <a class="nav-link" href="/">Match Recipes<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="/filters">Filters</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/recipes">Featured</a>
+        </li>
+      </ul>
+      </div>
+    </nav>
+
+    <!-- Filters -->
+    <h3>Dietary Restrictions</h3>
+    <% // Load checkbox items with given set values
+      var checkbox_html="";
+
+      checkbox_html+='<div class="checkbox"><input type="checkbox" id="vegetarian" name="vegetarian"';
+      if (settings['vegetarian']) {
+        checkbox_html+='checked';
+      }
+      checkbox_html+='><label for="vegetarian">Vegetarian</label></div>';
+
+      checkbox_html+='<div class="checkbox"><input type="checkbox" id="vegan" name="vegan"';
+      if (settings['vegan']) {
+        checkbox_html+='checked';
+      }
+      checkbox_html+='><label for="vegan">Vegan</label></div>';
+
+      checkbox_html+='<div class="checkbox"><input type="checkbox" id="dairy_free" name="dairy_free"';
+      if (settings['dairy_free']) {
+        checkbox_html+='checked';
+      }
+      checkbox_html+='><label for="dairy_free">Dairy Free</label></div>';
+
+      checkbox_html+='<div class="checkbox"><input type="checkbox" id="gluten_free" name="gluten_free"';
+      if (settings['gluten_free']) {
+      console.log('gluten');
+        checkbox_html+='checked';
+      }
+      checkbox_html+='><label for="gluten_free">Gluten Free</label></div>';
+
+      checkbox_html+='<div class="checkbox"><input type="checkbox" id="nut_free" name="nut_free"';
+      if (settings['nut_free']) {
+        checkbox_html+='checked';
+      }
+      checkbox_html+='><label for="nut_free">Nut Free</label></div>';
+    %>
+    <%- checkbox_html%>
+
+
+
+    <h3>Cook Time</h3>
+    <div class="form-group">
+      <label for="sel1">Select Time (Minutes):</label>
+      <select class="form-control" id="cook_time" name='cook_time'>
+        <%
+        var options=['Any Time', 'Under 10', 'Under 20', 'Under 30', 'Under 60'];
+        cook_time_html="";
+
+        for (let i=0; i < options.length; i++) {
+          cook_time_html+='<option ';
+          if (settings['cook_time']==options[i])
+            cook_time_html+='selected';
+          cook_time_html+='>'+options[i]+'</option>';
+        }
+        %><%- cook_time_html%>
+      </select>
+    </div>
+
+
+    <script>
+      
+      // Update preferences with post request
+      function sendUpdatePost(key,val) {
+          console.log(key+' '+val);
+          $.post(window.location.origin+'/updateSettings?setting='+key+'&val='+val);
+          //,data,function(data,status,xhr),dataType)
+        }
+      $("#vegetarian, #vegan, #dairy_free, #gluten_free, #nut_free").click( function(){
+         sendUpdatePost($(this).attr('name'), $(this).is(':checked'));
+      });
+      $("#cook_time, #sel1").change(function () {
+        sendUpdatePost($(this).attr('name'), $(this).children("option:selected").val());
+      });
+    </script>
+  </body>
+</html>

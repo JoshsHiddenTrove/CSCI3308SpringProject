@@ -1,0 +1,287 @@
+* {
+  box-sizing: border-box
+}
+
+body {
+  font-family: Verdana, sans-serif;
+  margin:0;
+  background: url("../img/textured_paper.png");
+}
+
+.mySlides {
+  display: none
+}
+
+img {
+  vertical-align: middle;
+}
+
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1500px;
+  position: relative;
+  margin: auto;
+  margin-bottom: 24px;
+}
+
+/* Next & previous buttons */
+.arrow{
+  cursor: pointer;
+  position: absolute;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  user-select: none;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.arrow:hover {
+  background-color: rgba(0,0,0,0.8);
+}
+
+/* Position the "next button" to the right */
+.like {
+  width: auto;
+  top: calc(50% - 16px);
+  right: 0%;
+  border-radius: 3px 0 0 3px;
+}
+
+.dislike {
+  width: auto;
+  left: 0%;
+  top: calc(50% - 16px);
+  border-radius: 0px 3px 3px 0px;
+}
+
+/* Position the "down button" to the bottom middle */
+.down {
+  width: 80px;
+  height: 24px;
+  left: calc(50% - 40px);
+  top: 100%;
+  border-radius: 0px 0px 3px 3px;
+  padding: 2px 16px;
+  text-align: center;
+}
+
+
+/* Caption text */
+.text {
+  color: #f2f2f2;
+  font-size: 18px;
+  font-weight: 500;
+  padding: 8px 12px;
+  position: absolute;
+  bottom: 8px;
+  width: 100%;
+  text-align: center;
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  font-size: 12px;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 768px) {
+  .arrow, .text {font-size: 11px}
+  .icon-bar {
+    display: none;
+  }
+}
+
+.mySlides img {
+  object-fit: contain;
+  width: 100%;
+  height: 500px;
+}
+
+h3 {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  padding-left: 50px;
+}
+
+.checkbox {
+  padding-left: 100px;
+}
+
+.checkbox input {
+  margin-right: 6px;
+}
+
+.form-group {
+  padding-left: 100px;
+  width: 400px;
+}
+
+.container {
+  margin: auto;
+  padding-top: 20px;
+}
+
+.recipe {
+  padding: 20px;
+  border-style: dotted;
+}
+
+.icon-bar {
+  position: fixed;
+  top: 75%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+.icon-bar a {
+  display: block;
+  text-align: center;
+  padding: 8px;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 20px;
+}
+
+.icon-bar a:hover {
+  background-color: #000;
+}
+
+.icon-bar img {
+  max-width: 100%;
+  width: 64px;
+}
+
+.facebook {
+  background: #3B5998;
+  color: white;
+}
+
+.twitter {
+  background: #55ACEE;
+  color: white;
+}
+
+.pinterest {
+  background: #dd4b39;
+  color: white;
+}
+
+.instagram {
+  background: #472292;
+  color: white;
+}
+
+.youtube {
+  background: #222222;
+  color: white;
+}
+
+.content {
+  margin-left: 75px;
+  font-size: 30px;
+}
+
+.feature-set {
+  display: inline-block;
+  width: 90%;
+  margin: 0% 5%;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.feature-set .feature-card {
+  display: block;
+  width: 228px;
+  object-fit: contain;
+  border-radius: 20px;
+  border: grey dotted 2px;
+  float: left;
+  margin: 4px 12px;
+}
+.feature-set .feature-img {
+  object-fit: cover;
+  border-radius: 20px;
+  height:calc(146px - 10px);
+  width:calc(100% - 10px);
+  margin: 5px;
+}
+
+.feature-set p{
+  text-align: center;
+  font-size: 18px;
+  padding-top: 4px;
+}
+
+.tutorial {
+  display: none;
+  position: fixed;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  z-index: 1;
+}
+
+.Opened_Tutorial {
+  background-color: #4CAF50; /* Green that goes well with grey background*/
+  margin: auto;
+  padding: 10px;
+  border: none;
+  width: 75%;
+  z-index: 1;
+}
+
+.tutorial_button {
+  background-color: #4CAF50; /* Green that goes well with grey background*/
+  opacity: .8;
+  border: none;
+  color: white;
+  width: 100%;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+
+.tutorial_button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.tutorial_button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.tutorial_button:hover span {
+  padding-right: 30px;
+}
+
+.tutorial_button span:after {
+  opacity: 1;
+  right: -10px;
+}
