@@ -27,18 +27,18 @@
   <body>
     <!-- Navigation Bar -->
     <% 
-      var button1='<div ';
-      var button2='<button ';
+      var button1='<div style="margin-left: auto; ';
+      var button2='<button style="margin-left: auto; ';
       
       if (logged_in==true) {
-        button1+='style="display:none;"';
+        button1+='display:none;';
       }
       else {
-        button2+='style="display:none;"';
+        button2+='display:none;';
       }
 
-      button1+=` id='GoogleSignIn' class="g-signin2" data-onsuccess="onSignIn"></div>`;
-      button2+=` id='GoogleSignOut' onclick='onOut()'>Sign Out</button>`;
+      button1+=`" id='GoogleSignIn' class="g-signin2" data-onsuccess="onSignIn"></div>`;
+      button2+=`" id='GoogleSignOut' onclick='onOut()'>Sign Out</button>`;
     %>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -62,8 +62,8 @@
           <a class="nav-link" href="/recipes">Featured</a>
         </li>
       </ul>
-      </div>
       <%- button1 %><%- button2 %>
+      </div>
     </nav>
     
     <button id="TutBtn" class="tutorial_button" style="vertical-align:middle"><span>Click here to see how this site works  </span></button>

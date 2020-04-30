@@ -8,7 +8,7 @@
 
 
 // Deployment configuration Variables
-var deploy_local=true;	// If serving locally, set to true
+var deploy_local=false;	// If serving locally, set to true
 
 const local_port=3000;			// Port to serve locally
 const local_configuration= {	// Database to read/ write locally
