@@ -4,6 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="google-signin-client_id" content="101184466692-kr68aen0dp5gdqbih75vdaoc701ql7l3.apps.googleusercontent.com">
 
     
     <!-- JavaScript -->
@@ -11,9 +12,11 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" crossorigin="anonymous"></script>
     <script src="http://code.jquery.com/jquery-3.4.1.js" crossorigin="anonymous"></script>
     -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src='/resources/js/jquery.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src='../resources/js/google_sign_in.js'></script>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -23,6 +26,21 @@
   </head>
   <body>
     <!-- Navigation Bar -->
+    <% 
+      var button1='<div ';
+      var button2='<button ';
+      
+      if (logged_in==true) {
+        button1+='style="display:none;"';
+      }
+      else {
+        button2+='style="display:none;"';
+      }
+
+      button1+=` id='GoogleSignIn' class="g-signin2" data-onsuccess="onSignIn"></div>`;
+      button2+=` id='GoogleSignOut' onclick='onOut()'>Sign Out</button>`;
+    %>
+    
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="#">
         <img src="../resources/img/hungryhill.png" width="30" height="30" class="d-inline-block align-top" alt="">
@@ -45,6 +63,7 @@
         </li>
       </ul>
       </div>
+      <%- button1 %><%- button2 %>
     </nav>
 
     <!-- Filters -->

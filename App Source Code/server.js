@@ -8,14 +8,14 @@
 
 
 // Deployment configuration Variables
-var deploy_local=false;	// If serving locally, set to true
+var deploy_local=true;	// If serving locally, set to true
 
 const local_port=3000;			// Port to serve locally
 const local_configuration= {	// Database to read/ write locally
 	host: 'localhost',
 	port: 5432,
 	database: 'hungryhill',
-	user: 'postgres',
+	user: 'gzimm4',
 	password: 'pwd'
 };
 
@@ -50,6 +50,11 @@ const { buildCheckFunction } = require('express-validator');
 const checkQuery = buildCheckFunction(['query']);
 
 
+const {OAuth2Client} = require('google-auth-library');
+const client = new OAuth2Client('101184466692-kr68aen0dp5gdqbih75vdaoc701ql7l3.apps.googleusercontent.com');
+
+
+
 // Cookies
 // sessionData
 let sessionData = {
@@ -65,21 +70,29 @@ let sessionData = {
 		liked: [0],	// Recipes swiped in favor of
 		sank: [0]	// Recipes swiped regardless of direction; i.e. input was sank
 	},
-	version: 1		// For testing purposes
-} 
+	version: 4,		// For testing purposes
+	profile: {
+		signed_in: false,
+		id: 0
+	}
+}
 
 
+
+// Cookie Helpers
 function initCookie(res) { 	// Initialize session if we don't have an active session
 	console.log('creating cookie',{maxAge: 360000});
 	res.cookie("session", sessionData);
 }
 
+// returns cookie object given request and response; pulls changes from database if user is signed in; initializes cookie if non-existent or out-dated from version
 function loadCookie(req,res) {
 	var current_session=req.cookies.session;
 	if (!current_session) {
 		initCookie(res);
 		current_session=sessionData;
-	};
+	}
+	
 
 	if (current_session.version != sessionData.version){
 		console.log('Outdated cookies');
@@ -87,8 +100,42 @@ function loadCookie(req,res) {
 		initCookie(res);
 		current_session=sessionData;
 	}
+
+
+	if (current_session.profile.signed_in==true) {
+		database.any(`SELECT * FROM users WHERE id='`+current_session.profile.id+`';`)
+		.then(function (userStoredData) {
+			current_session.settings=userStoredData[0].settings;
+    		current_session.recipes=userStoredData[0].recipes;
+		});
+	}
+
 	return current_session;
 }
+
+
+// Resets cookie with new values from passed in json; will post changes to database if user is signed in
+function setCookie(cookie_json,res) {
+	// If logged in, update SQL User Table
+	
+	if (cookie_json.profile.signed_in==true) {
+		var settings=JSON.stringify(cookie_json.settings);
+    	var recipes=JSON.stringify(cookie_json.recipes);
+
+		query=`UPDATE users SET recipes='`+recipes+`', settings='`+settings+`' WHERE id='`+cookie_json.profile.id+`'`;
+		database.any(query);
+	};
+
+	// Set it
+	res.clearCookie('session'); 
+	res.cookie("session", cookie_json); 
+}
+
+
+
+
+
+
 
 // App Request Handlers
 // Home page- loads the main feature; swiping in favor of recipes
@@ -133,7 +180,8 @@ function homePage(req,res) {
 	database.any(find_query)
 	.then(function (matched_recipes){
 		res.render('home',{
-        	recipes: matched_recipes
+        	recipes: matched_recipes,
+        	logged_in: current_session.profile.signed_in
     	});
 
 	})
@@ -143,6 +191,11 @@ function homePage(req,res) {
 
 };
 app.get('/',homePage);
+
+
+
+
+
 
 
 //handleSwipe - Will record liked recipe ids in cookie session and post an update to the database
@@ -169,9 +222,7 @@ function handleSwipe(req,res) {
 	
 	current_session.recipes.sank.push(parseInt(id));
 
-	res.clearCookie('session'); 
-	res.cookie("session", current_session);
-
+	setCookie(current_session,res);
 
 	database.any(increment_query)
 	.then(function (matched_recipes){
@@ -187,6 +238,12 @@ function handleSwipe(req,res) {
 app.post('/swipe', [
 	checkQuery('id').toInt()
 ],handleSwipe);
+
+
+
+
+
+
 
 
 // handleSettings- will update the user's cookie based off a post request
@@ -216,8 +273,7 @@ function handleSettings(req,res) {
 
 	current_session.settings[setting]=value;
 
-	res.clearCookie('session'); 
-	res.cookie("session", current_session); 
+	setCookie(current_session,res);
 
 	res.status(202).send({status: 'heard'});
 };
@@ -225,7 +281,13 @@ function handleSettings(req,res) {
 app.post('/updateSettings', [
 	checkQuery('setting').escape(),
 	checkQuery('val').escape()
-	],handleSettings);
+],handleSettings);
+
+
+
+
+
+
 
 
 // filterPage - Loads the user's page to set filters
@@ -233,10 +295,17 @@ function filterPage(req,res) {
 	var current_session=loadCookie(req,res);
 
 	res.render('filters',{
-		settings: current_session.settings
+		settings: current_session.settings,
+        logged_in: current_session.profile.signed_in
 	});
 };
 app.get('/filters',filterPage);
+
+
+
+
+
+
 
 
 // recipePage - Loads a feature page where all user's liked recipes are recorded
@@ -275,15 +344,106 @@ function recipePage(req,res) {
       res.render('Liked_Recipes',{
       	featured: results[0],
       	vegetarian: results[1],
-      	liked: results[2]
+      	liked: results[2],
+        logged_in: current_session.profile.signed_in
 	  });
     })
     .catch(err => {
         // display error message in case an error
-          console.log(err);
+        console.log(err);
     });
 };
 app.get('/recipes',recipePage);
+
+
+
+
+
+
+
+
+
+// Signs user in
+async function onSignIn(req,res) {
+	var token=req.body.token;
+	var path=req.body.reload_path;
+
+
+	// Use google library to authenticate user token
+	const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: '101184466692-kr68aen0dp5gdqbih75vdaoc701ql7l3.apps.googleusercontent.com'
+  	});
+
+
+  	const payload = ticket.getPayload();
+    const userid = payload['sub'];
+
+    var current_session=loadCookie(req,res);
+    var settings=JSON.stringify(current_session.settings);
+    var recipes=JSON.stringify(current_session.recipes);
+
+
+    database.any(`SELECT * FROM users WHERE id='`+userid+`';`)
+    .then(function (userStoredData) {
+    	current_session.profile.signed_in = true;
+    	current_session.profile.id=userid;
+
+    	if (userStoredData.length==0) {	// If new user then set their cookie in the database
+    		query_insert=`INSERT INTO users VALUES ('`+userid+`', '`+settings+`', '`+recipes+`');`;
+    		database.any(query_insert);
+
+    		// We've updated the signed in values, so we need to update the cookie
+    		res.clearCookie('session'); 
+			res.cookie("session", current_session); 
+			
+			res.redirect('back');
+
+			console.log(current_session);
+	    }
+	    else {	// User exists, load in their cookie now
+	    	current_session.settings=userStoredData[0].settings;
+	    	current_session.recipes=userStoredData[0].recipes;
+
+	    	res.clearCookie('session'); 
+			res.cookie("session", current_session); 
+	    	// Now reload, because what we loaded may be different than what the use had before
+	    	res.redirect('back');
+	    }
+    })
+    .catch(function(err) {
+		console.log(err);
+		res.status(501).send({status: 'error'});
+	});
+};
+app.post('/signIn',onSignIn);
+
+
+
+
+
+
+
+// Signs user out and resets cookie to default
+function onSignOut(req, res) {
+	var current_session=loadCookie(req,res);
+	current_session.profile.signed_in=false;
+
+	res.clearCookie('session'); 
+	initCookie(res);
+
+	// Reload now that we defaulted our cookie
+	res.redirect('back');
+};
+app.post('/signOut',onSignOut);
+
+
+
+
+
+
+
+
 
 
 
