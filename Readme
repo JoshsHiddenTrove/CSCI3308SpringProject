@@ -1,0 +1,6 @@
+The repo is orginized  the front end of jack and alan in folders each labeled as such then henries swipping feature in its own folders.
+Gavin has his code in App Source code and unorginized in the reposity as just files. The back end with me and brandon have our files unorginzied throughout the 
+reposity simply labeled as what theya re used for.
+We built the code by starting with the scraping and front end design then created the database with the webscraping and finally had gavin and
+henry intergrate the front and back end then used users to test out particular features asking them to do tasks and seeing if they could
+fullfil them without any issues. We did not end up using CI.
